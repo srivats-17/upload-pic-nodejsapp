@@ -8,12 +8,11 @@ phases:
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t your-dockerhub-username/photo-upload-app .
+      - docker build -t jamallasomasekhar/upload-pic .
       - echo Tagging the Docker image...
-      - docker tag your-dockerhub-username/photo-upload-app:latest your-dockerhub-username/photo-upload-app:latest
   post_build:
     commands:
       - echo Pushing the Docker image to Docker Hub...
-      - docker push your-dockerhub-username/photo-upload-app:latest
+      - docker push jamallasomasekhar/upload-pic:latest
 artifacts:
   files: '**/*'
