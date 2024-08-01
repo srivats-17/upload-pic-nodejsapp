@@ -12,7 +12,7 @@
   "Environment": [
     {
       "Name": "MONGODB_URI",
-      "Value": "mongodb+srv://somasekharjamalla:0Tz6yZtsbr7Ta6IE@upload-photos.hyf9fi5.mongodb.net/?retryWrites=true&w=majority&appName=upload-photos"
+      "Value": "mongodb+srv://somasekharjamalla:0Tz6yZtsbr7Ta6IE@upload-pic.19kas8f.mongodb.net/?retryWrites=true&w=majority&appName=upload-pic"
     },
     {
         "Name": "PORT"
