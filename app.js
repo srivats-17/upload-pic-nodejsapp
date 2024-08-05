@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const bodyParser = require('body-parser');
 const path = require('path');
+const client = require('prom-client');
 
 const app = express();
 
@@ -31,6 +32,31 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
+// Create a Registry to register the metrics
+const register = new client.Registry();
+
+// Create a Counter metric to count HTTP requests
+const httpRequestCounter = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests',
+  labelNames: ['method', 'route', 'status'],
+});
+
+// Add the counter to the registry
+register.registerMetric(httpRequestCounter);
+
+// Middleware to count requests
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    httpRequestCounter.inc({
+      method: req.method,
+      route: req.route ? req.route.path : req.path,
+      status: res.statusCode,
+    });
+  });
+  next();
+});
+
 // Routes
 app.get('/', async (req, res) => {
   const photos = await Photo.find();
@@ -43,6 +69,12 @@ app.post('/upload', upload.single('photo'), async (req, res) => {
   newPhoto.photo.contentType = req.file.mimetype;
   await newPhoto.save();
   res.redirect('/');
+});
+
+// Create an endpoint to expose metrics
+app.get('/metrics', async (req, res) => {
+  res.setHeader('Content-Type', register.contentType);
+  res.end(await register.metrics());
 });
 
 // Start the server
